@@ -1,20 +1,14 @@
 {% extends 'base.html' %}
 
-{% block extra_title %}Home | ManaVault{% endblock %}
+{% block extra_title %}Cards | ManaVault{% endblock %}
 
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-4">Welcome to ManaVault</h1>
-    <p class="lead">A curated store for Magic: The Gathering cards from a personal collection.</p>
-    <a href="{% url 'cards' %}" class="btn btn-primary btn-lg mt-3">Browse Cards</a>
-</div>
-
-<section class="mt-5">
-    <h2 class="mb-4">Featured Cards</h2>
+<div class="py-4">
+    <h1 class="mb-4">All Cards</h1>
 
     <div class="row">
-        {% for card in featured_cards %}
-            <div class="col-md-4 mb-4">
+        {% for card in cards %}
+            <div class="col-md-4 col-lg-3 mb-4">
                 <div class="card h-100 shadow-sm">
                     {% if card.image %}
                         <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
@@ -23,14 +17,14 @@
                         <h5 class="card-title">{{ card.name }}</h5>
                         <p class="card-text mb-1"><strong>Set:</strong> {{ card.set_name }}</p>
                         <p class="card-text mb-1"><strong>Rarity:</strong> {{ card.get_rarity_display }}</p>
-                        <p class="card-text mb-2"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
+                        <p class="card-text mb-1"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
                         <p class="fw-bold">€{{ card.price }}</p>
                     </div>
                 </div>
             </div>
         {% empty %}
-            <p>No cards available yet.</p>
+            <p>No cards available.</p>
         {% endfor %}
     </div>
-</section>
+</div>
 {% endblock %}
