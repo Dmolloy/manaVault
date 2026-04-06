@@ -20,7 +20,11 @@
                         <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ card.name }}</h5>
+                        <h5 class="card-title">
+                            <a href="{% url 'card_detail' card.id %}" class="text-decoration-none">
+                                {{ card.name }}
+                            </a>
+                        </h5>
                         <p class="card-text mb-1"><strong>Set:</strong> {{ card.set_name }}</p>
                         <p class="card-text mb-1"><strong>Rarity:</strong> {{ card.get_rarity_display }}</p>
                         <p class="card-text mb-2"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
