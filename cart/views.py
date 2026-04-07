@@ -40,4 +40,4 @@ def add_to_cart(request, card_id):
 
     messages.success(request, f'Added {card.name} to your cart')
 
-    return redirect('view_cart')
+    return redirect('card_detail', card_id=card.id)
