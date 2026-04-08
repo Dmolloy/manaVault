@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block extra_title %}Checkout | ManaVault{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="mb-4">Checkout</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h4 class="mb-3">Delivery Details</h4>
+
+        <div class="mb-2">
+            <input type="text" name="full_name" placeholder="Full Name" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <input type="email" name="email" placeholder="Email" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="phone_number" placeholder="Phone Number" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="street_address1" placeholder="Street Address 1" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="street_address2" placeholder="Street Address 2" class="form-control">
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="town_or_city" placeholder="Town or City" class="form-control" required>
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="county" placeholder="County" class="form-control">
+        </div>
+
+        <div class="mb-2">
+            <input type="text" name="postcode" placeholder="Postcode" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <input type="text" name="country" placeholder="Country" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+</div>
+{% endblock %}
