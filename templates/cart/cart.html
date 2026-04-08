@@ -1,33 +1,71 @@
 {% extends 'base.html' %}
 
+{% block extra_title %}Your Cart | ManaVault{% endblock %}
+
 {% block content %}
 <h1 class="mb-4">Your Cart</h1>
 
 {% if cart_items %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Card</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
                 <tr>
-                    <td>{{ item.card.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>€{{ item.card.price }}</td>
-                    <td>€{{ item.subtotal }}</td>
+                    <th>Card</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <strong>{{ item.card.name }}</strong><br>
+                            <small>{{ item.card.set_name }} | {{ item.card.get_condition_display }}</small>
+                        </td>
+                        <td>€{{ item.card.price }}</td>
+                        <td>
+                            <form action="{% url 'update_cart' item.card.id %}" method="POST" class="d-flex gap-2 align-items-center">
+                                {% csrf_token %}
 
-    <h3>Total: €{{ total }}</h3>
+                                {% if item.card.stock_quantity > 1 %}
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        value="{{ item.quantity }}"
+                                        min="0"
+                                        max="{{ item.card.stock_quantity }}"
+                                        class="form-control"
+                                        style="width: 90px;"
+                                    >
+                                {% else %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <span>1</span>
+                                {% endif %}
 
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                            </form>
+                        </td>
+                        <td>€{{ item.subtotal }}</td>
+                        <td>
+                            <a href="{% url 'remove_from_cart' item.card.id %}" class="btn btn-sm btn-outline-danger">
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-end mt-4">
+        <h3>Total: €{{ total }}</h3>
+        <a href="{% url 'cards' %}" class="btn btn-outline-secondary mt-2">Continue Shopping</a>
+        <a href="#" class="btn btn-primary mt-2">Checkout Coming Next</a>
+    </div>
 {% else %}
     <p>Your cart is empty.</p>
+    <a href="{% url 'cards' %}" class="btn btn-primary">Browse Cards</a>
 {% endif %}
 {% endblock %}
