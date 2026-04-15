@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block extra_title %}Payment Success | ManaVault{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <h1 class="mb-3">Payment successful</h1>
+    <p class="lead">Stripe checkout is working.</p>
+    <a href="{% url 'cards' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+</div>
+{% endblock %}
