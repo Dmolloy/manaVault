@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Order, OrderLineItem
 from cards.models import Card
+from profiles.models import UserProfile
 
 
 def checkout(request):
@@ -26,6 +27,10 @@ def checkout(request):
             'subtotal': subtotal,
         })
 
+    profile = None
+    if request.user.is_authenticated:
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     if request.method == 'POST':
@@ -42,6 +47,7 @@ def checkout(request):
         }
 
         request.session['checkout_data'] = checkout_data
+        request.session.modified = True
 
         line_items = []
 
@@ -70,6 +76,7 @@ def checkout(request):
     return render(request, 'checkout/checkout.html', {
         'cart_items': cart_items,
         'total': total,
+        'profile': profile,
     })
 
 
@@ -77,12 +84,16 @@ def checkout_success(request):
     cart = request.session.get('cart', {})
     checkout_data = request.session.get('checkout_data')
 
-    if not cart or not checkout_data:
-        messages.error(request, "No completed checkout data found.")
+    if not cart:
+        messages.error(request, "Cart data was not found after payment.")
         return redirect('cards')
 
-    cart_items = []
+    if not checkout_data:
+        messages.error(request, "Checkout data was not found after payment.")
+        return redirect('checkout')
+
     total = Decimal('0.00')
+    cart_items = []
 
     for card_id, quantity in cart.items():
         card = get_object_or_404(Card, pk=card_id, is_active=True)
@@ -93,6 +104,7 @@ def checkout_success(request):
 
         subtotal = card.price * quantity
         total += subtotal
+
         cart_items.append({
             'card': card,
             'quantity': quantity,
@@ -121,6 +133,16 @@ def checkout_success(request):
         )
         item['card'].stock_quantity -= item['quantity']
         item['card'].save()
+
+    if request.user.is_authenticated:
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        profile.default_phone_number = checkout_data.get('phone_number')
+        profile.default_street_address1 = checkout_data.get('street_address1')
+        profile.default_street_address2 = checkout_data.get('street_address2')
+        profile.default_town_or_city = checkout_data.get('town_or_city')
+        profile.default_postcode = checkout_data.get('postcode')
+        profile.default_country = checkout_data.get('country')
+        profile.save()
 
     request.session['cart'] = {}
     request.session['checkout_data'] = {}

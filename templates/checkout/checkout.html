@@ -13,27 +13,33 @@
             <h4 class="mb-3">Delivery Details</h4>
 
             <div class="mb-2">
-                <input type="text" name="full_name" placeholder="Full Name" class="form-control" required>
+                <input type="text" name="full_name" placeholder="Full Name" class="form-control"
+                    value="{% if profile %}{{ profile.user.username }}{% endif %}" required>
             </div>
 
             <div class="mb-2">
-                <input type="email" name="email" placeholder="Email" class="form-control" required>
+                <input type="email" name="email" placeholder="Email" class="form-control"
+                    value="{% if user.is_authenticated %}{{ user.email }}{% endif %}" required>
             </div>
 
             <div class="mb-2">
-                <input type="text" name="phone_number" placeholder="Phone Number" class="form-control" required>
+                <input type="text" name="phone_number" placeholder="Phone Number" class="form-control"
+                    value="{% if profile %}{{ profile.default_phone_number }}{% endif %}" required>
             </div>
 
             <div class="mb-2">
-                <input type="text" name="street_address1" placeholder="Street Address 1" class="form-control" required>
+                <input type="text" name="street_address1" placeholder="Street Address 1" class="form-control"
+                    value="{% if profile %}{{ profile.default_street_address1 }}{% endif %}" required>
             </div>
 
             <div class="mb-2">
-                <input type="text" name="street_address2" placeholder="Street Address 2" class="form-control">
+                <input type="text" name="street_address2" placeholder="Street Address 2" class="form-control"
+                    value="{% if profile %}{{ profile.default_street_address2 }}{% endif %}">
             </div>
 
             <div class="mb-2">
-                <input type="text" name="town_or_city" placeholder="Town or City" class="form-control" required>
+                <input type="text" name="town_or_city" placeholder="Town or City" class="form-control"
+                    value="{% if profile %}{{ profile.default_town_or_city }}{% endif %}" required>
             </div>
 
             <div class="mb-2">
@@ -41,11 +47,13 @@
             </div>
 
             <div class="mb-2">
-                <input type="text" name="postcode" placeholder="Postcode" class="form-control" required>
+                <input type="text" name="postcode" placeholder="Postcode" class="form-control"
+                    value="{% if profile %}{{ profile.default_postcode }}{% endif %}" required>
             </div>
 
             <div class="mb-3">
-                <input type="text" name="country" placeholder="Country" class="form-control" required>
+                <input type="text" name="country" placeholder="Country" class="form-control"
+                    value="{% if profile %}{{ profile.default_country }}{% endif %}" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Place Order</button>
