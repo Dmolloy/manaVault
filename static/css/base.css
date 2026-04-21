@@ -56,6 +56,15 @@ footer {
     color: #c18c00;
 }
 
+.clickable-card {
+    cursor: pointer;
+}
+
+.clickable-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
 /* Buttons */
 .btn-primary {
     background-color: #8c6a00;

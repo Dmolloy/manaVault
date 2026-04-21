@@ -15,22 +15,20 @@
     <div class="row">
         {% for card in featured_cards %}
             <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    {% if card.image %}
-                        <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{% url 'card_detail' card.id %}" class="text-decoration-none">
-                                {{ card.name }}
-                            </a>
-                        </h5>
-                        <p class="card-text mb-1"><strong>Set:</strong> {{ card.set_name }}</p>
-                        <p class="card-text mb-1"><strong>Rarity:</strong> {{ card.get_rarity_display }}</p>
-                        <p class="card-text mb-2"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
-                        <p class="fw-bold">€{{ card.price }}</p>
+                <a href="{% url 'card_detail' card.id %}" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm clickable-card">
+                        {% if card.image %}
+                            <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ card.name }}</h5>
+                            <p class="card-text mb-1"><strong>Set:</strong> {{ card.set_name }}</p>
+                            <p class="card-text mb-1"><strong>Rarity:</strong> {{ card.get_rarity_display }}</p>
+                            <p class="card-text mb-1"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
+                            <p class="fw-bold">€{{ card.price }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         {% empty %}
             <p>No cards available yet.</p>
