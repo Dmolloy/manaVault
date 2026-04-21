@@ -19,12 +19,12 @@
             </thead>
             <tbody>
                 {% for item in cart_items %}
-                    <tr>
+                    <tr class="cart-row" data-price="{{ item.card.price }}">
                         <td>
                             <strong>{{ item.card.name }}</strong><br>
                             <small>{{ item.card.set_name }} | {{ item.card.get_condition_display }}</small>
                         </td>
-                        <td>€{{ item.card.price }}</td>
+                        <td class="item-price">€{{ item.card.price }}</td>
                         <td>
                             <form action="{% url 'update_cart' item.card.id %}" method="POST" class="d-flex gap-2 align-items-center">
                                 {% csrf_token %}
@@ -36,18 +36,18 @@
                                         value="{{ item.quantity }}"
                                         min="0"
                                         max="{{ item.card.stock_quantity }}"
-                                        class="form-control"
+                                        class="form-control quantity-input"
                                         style="width: 90px;"
                                     >
                                 {% else %}
-                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="quantity" value="1" class="quantity-input">
                                     <span>1</span>
                                 {% endif %}
 
                                 <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
                             </form>
                         </td>
-                        <td>€{{ item.subtotal }}</td>
+                        <td class="item-subtotal">€{{ item.subtotal }}</td>
                         <td>
                             <a href="{% url 'remove_from_cart' item.card.id %}" class="btn btn-sm btn-outline-danger">
                                 Remove
@@ -60,11 +60,53 @@
     </div>
 
     <div class="text-end mt-4">
-        <h3>Total: €{{ total }}</h3>
+        <h3>Total: <span id="cart-total">€{{ total }}</span></h3>
         <a href="{% url 'cards' %}" class="btn btn-outline-secondary mt-2">Continue Shopping</a>
-        <a href="{% url 'checkout' %}" class="btn btn-primary mt-2">Checkout</a>    </div>
+        <a href="{% url 'checkout' %}" class="btn btn-primary mt-2">Checkout</a>
+    </div>
 {% else %}
     <p>Your cart is empty.</p>
     <a href="{% url 'cards' %}" class="btn btn-primary">Browse Cards</a>
 {% endif %}
+{% endblock %}
+
+{% block postloadjs %}
+<script>
+    alert("Cart JS loaded");
+    console.log("Cart JS loaded");
+
+    const cartRows = document.querySelectorAll('.cart-row');
+    const cartTotalEl = document.getElementById('cart-total');
+
+    function updateCartDisplay() {
+        console.log("Updating cart display");
+
+        let total = 0;
+
+        cartRows.forEach(row => {
+            const price = parseFloat(row.dataset.price);
+            const quantityInput = row.querySelector('.quantity-input');
+            const subtotalEl = row.querySelector('.item-subtotal');
+
+            if (!quantityInput || !subtotalEl) {
+                return;
+            }
+
+            const quantity = parseInt(quantityInput.value) || 0;
+            const subtotal = price * quantity;
+
+            subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+            total += subtotal;
+        });
+
+        if (cartTotalEl) {
+            cartTotalEl.textContent = `€${total.toFixed(2)}`;
+        }
+    }
+
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', updateCartDisplay);
+        input.addEventListener('change', updateCartDisplay);
+    });
+</script>
 {% endblock %}

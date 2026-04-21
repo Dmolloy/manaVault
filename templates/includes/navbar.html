@@ -32,7 +32,9 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'view_cart' %}">Cart</a>
+                    <a href="{% url 'view_cart' %}" class="nav-link">
+                        Cart (<span id="cart-count">{{ request.session.cart|length|default:0 }}</span>)
+                    </a>                
                 </li>
             </ul>
         </div>

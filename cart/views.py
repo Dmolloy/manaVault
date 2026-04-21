@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from cards.models import Card
+from django.http import JsonResponse
 
 
 def view_cart(request):
@@ -28,15 +29,31 @@ def add_to_cart(request, card_id):
     card = get_object_or_404(Card, pk=card_id)
 
     quantity = int(request.POST.get('quantity', 1))
-
     cart = request.session.get('cart', {})
 
-    if str(card_id) in cart:
-        cart[str(card_id)] += quantity
-    else:
-        cart[str(card_id)] = quantity
+    current_quantity = cart.get(str(card_id), 0)
+    new_quantity = current_quantity + quantity
 
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+    if new_quantity > card.stock_quantity:
+        if is_ajax:
+            return JsonResponse({
+                'success': False,
+                'message': f'You can only add up to {card.stock_quantity} of {card.name}.'
+            })
+
+        messages.error(request, f'You can only add up to {card.stock_quantity} of {card.name}.')
+        return redirect('card_detail', card_id=card.id)
+
+    cart[str(card_id)] = new_quantity
     request.session['cart'] = cart
+
+    if is_ajax:
+        return JsonResponse({
+            'success': True,
+            'message': f'{quantity} x {card.name} added to cart.'
+        })
 
     messages.success(request, f'{quantity} x {card.name} added to your cart.')
     return redirect('card_detail', card_id=card.id)
