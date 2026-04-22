@@ -6,7 +6,14 @@
 <div class="row py-4">
     <div class="col-md-5 mb-4">
         {% if card.image %}
-            <img src="{{ card.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ card.name }}">
+            <img
+                src="{{ card.image.url }}"
+                class="img-fluid rounded shadow-sm"
+                alt="{{ card.name }}"
+                width="400"
+                height="560"
+                fetchpriority="high"
+            >
         {% else %}
             <div class="border rounded p-5 text-center bg-light">
                 No image available
@@ -41,6 +48,7 @@
                         <input
                             type="number"
                             name="quantity"
+                            id="quantity"
                             value="1"
                             min="1"
                             max="{{ card.stock_quantity }}"
@@ -76,8 +84,6 @@
         addToCartForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            console.log("Add to cart form submitted");
-
             const formData = new FormData(addToCartForm);
 
             fetch(addToCartForm.action, {
@@ -87,29 +93,40 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(response => {
-                console.log("Response status:", response.status);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (cartMessage) {
                     if (data.success) {
                         cartMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
 
                         const cartCount = document.getElementById('cart-count');
+                        const quantityInput = addToCartForm.querySelector('input[name="quantity"]');
+                        const quantityAdded = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+
                         if (cartCount) {
                             let current = parseInt(cartCount.textContent) || 0;
-                            cartCount.textContent = current + 1;
+                            cartCount.textContent = current + quantityAdded;
                         }
+
+                        setTimeout(() => {
+                            cartMessage.innerHTML = '';
+                        }, 2500);
                     } else {
                         cartMessage.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+
+                        setTimeout(() => {
+                            cartMessage.innerHTML = '';
+                        }, 3000);
                     }
                 }
             })
-            .catch(error => {
-                console.error("Fetch error:", error);
+            .catch(() => {
                 if (cartMessage) {
                     cartMessage.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again.</div>`;
+
+                    setTimeout(() => {
+                        cartMessage.innerHTML = '';
+                    }, 3000);
                 }
             });
         });

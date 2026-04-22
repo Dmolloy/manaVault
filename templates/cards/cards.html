@@ -27,7 +27,8 @@
                 <div class="card h-100 shadow-sm">
                     {% if card.image %}
                         <a href="{% url 'card_detail' card.id %}">
-                            <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
+                            <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}"
+                            width="300" height="420" loading="lazy">
                         </a>
                     {% endif %}
                     <div class="card-body">
