@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block extra_title %}My Wishlist | ManaVault{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="mb-1">My Wishlist</h1>
+            <p class="mb-0">Track cards you want to add to your collection.</p>
+        </div>
+        <a href="{% url 'add_wishlist_item' %}" class="btn btn-primary">Add Wishlist Item</a>
+    </div>
+
+    {% if items %}
+        <div class="row">
+            {% for item in items %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5 card-title">{{ item.card_name }}</h2>
+
+                            {% if item.set_name %}
+                                <p class="mb-1"><strong>Set:</strong> {{ item.set_name }}</p>
+                            {% endif %}
+
+                            <p class="mb-1">
+                                <strong>Desired Condition:</strong>
+                                {{ item.get_desired_condition_display }}
+                            </p>
+
+                            {% if item.max_price %}
+                                <p class="mb-1"><strong>Max Price:</strong> €{{ item.max_price }}</p>
+                            {% endif %}
+
+                            {% if item.notes %}
+                                <p class="mb-3"><strong>Notes:</strong> {{ item.notes }}</p>
+                            {% endif %}
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'edit_wishlist_item' item.id %}" class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+                                <a href="{% url 'delete_wishlist_item' item.id %}" class="btn btn-sm btn-outline-danger">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            You do not have any wishlist items yet.
+        </div>
+        <a href="{% url 'add_wishlist_item' %}" class="btn btn-primary">Add Your First Wishlist Item</a>
+    {% endif %}
+</div>
+{% endblock %}
