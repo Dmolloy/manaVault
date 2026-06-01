@@ -5,7 +5,7 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 
 ## 🚀 Live Project
 
-👉 https://manavault-03c0788c9056.herokuapp.com/
+👉 https://the-polite-pup-ad72f09397c7.herokuapp.com/
 
 ---
 
