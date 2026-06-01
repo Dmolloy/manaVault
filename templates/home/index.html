@@ -1,16 +1,74 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block extra_title %}Home | ManaVault{% endblock %}
 
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-4">Welcome to ManaVault</h1>
-    <p class="lead">A curated store for Magic: The Gathering cards from a personal collection.</p>
-    <a href="{% url 'cards' %}" class="btn btn-primary btn-lg mt-3">Browse Cards</a>
+<section class="hero-section rounded-4 p-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <p class="text-uppercase fw-bold mb-2 hero-kicker">Curated MTG Singles</p>
+            <h1 class="display-4 fw-bold">Build Your Next Deck with ManaVault</h1>
+            <p class="lead mt-3">
+                Browse curated Magic: The Gathering singles, purchase securely, and create wishlist requests for cards you want to see in stock.
+            </p>
+
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <a href="{% url 'cards' %}" class="btn btn-primary btn-lg">Browse Cards</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'wishlist' %}" class="btn btn-secondary-cta btn-lg">View Wishlist</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-secondary-cta btn-lg">Create Account</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="hero-image-wrapper">
+                <img
+                    src="https://res.cloudinary.com/digzw4mtg/image/upload/v1780337233/hero-cards_xbugr2.jpg"
+                    class="img-fluid rounded-4 hero-image"
+                    alt="Magic: The Gathering cards displayed on a playmat"
+                >
+            </div>
 </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <div class="row text-center g-4">
+        <div class="col-md-4">
+            <div class="feature-box h-100 p-4 rounded-4">
+                <h2 class="h5">Browse Singles</h2>
+                <p class="mb-0">Explore available Magic: The Gathering cards with clear prices, rarity, condition, and stock levels.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box h-100 p-4 rounded-4">
+                <h2 class="h5">Create Wishlist Requests</h2>
+                <p class="mb-0">Track cards you want ManaVault to stock and manage your own wishlist from the frontend.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-box h-100 p-4 rounded-4">
+                <h2 class="h5">Checkout Securely</h2>
+                <p class="mb-0">Complete purchases through Stripe and view order history from your profile.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="mt-5">
-    <h2 class="mb-4">Featured Cards</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="mb-1">Featured Cards</h2>
+            <p class="text-muted mb-0">A small selection from the current ManaVault inventory.</p>
+        </div>
+        <a href="{% url 'cards' %}" class="btn btn-outline-primary">View All Cards</a>
+    </div>
 
     <div class="row">
         {% for card in featured_cards %}
@@ -18,14 +76,21 @@
                 <a href="{% url 'card_detail' card.id %}" class="text-decoration-none text-dark d-block h-100">
                     <div class="card h-100 shadow-sm clickable-card">
                         {% if card.image %}
-                            <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.name }}">
+                            <img
+                                src="{{ card.image.url }}"
+                                class="card-img-top"
+                                alt="{{ card.name }}"
+                                width="300"
+                                height="420"
+                                loading="lazy"
+                            >
                         {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ card.name }}</h5>
+                            <h3 class="h5 card-title">{{ card.name }}</h3>
                             <p class="card-text mb-1"><strong>Set:</strong> {{ card.set_name }}</p>
                             <p class="card-text mb-1"><strong>Rarity:</strong> {{ card.get_rarity_display }}</p>
                             <p class="card-text mb-1"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
-                            <p class="fw-bold">€{{ card.price }}</p>
+                            <p class="fw-bold mb-0">€{{ card.price }}</p>
                         </div>
                     </div>
                 </a>
