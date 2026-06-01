@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block extra_title %}{{ page_title }} | ManaVault{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="mb-4">{{ page_title }}</h1>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="{{ form.card_name.id_for_label }}" class="form-label">Card Name</label>
+                    {{ form.card_name }}
+                    {% if form.card_name.errors %}
+                        <div class="text-danger small">{{ form.card_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.set_name.id_for_label }}" class="form-label">Set Name</label>
+                    {{ form.set_name }}
+                    {% if form.set_name.errors %}
+                        <div class="text-danger small">{{ form.set_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.desired_condition.id_for_label }}" class="form-label">Desired Condition</label>
+                    {{ form.desired_condition }}
+                    {% if form.desired_condition.errors %}
+                        <div class="text-danger small">{{ form.desired_condition.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.max_price.id_for_label }}" class="form-label">Maximum Price</label>
+                    {{ form.max_price }}
+                    {% if form.max_price.errors %}
+                        <div class="text-danger small">{{ form.max_price.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="text-danger small">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+                <a href="{% url 'wishlist' %}" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
