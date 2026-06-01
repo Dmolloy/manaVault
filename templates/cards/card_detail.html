@@ -68,6 +68,20 @@
             <button class="btn btn-secondary" disabled>Out of Stock</button>
         {% endif %}
 
+        {% if user.is_authenticated %}
+            <div class="mt-3">
+                <a href="{% url 'add_existing_card_to_wishlist' card.id %}" class="btn btn-outline-primary">
+                    Add to Wishlist
+                </a>
+            </div>
+        {% else %}
+            <div class="mt-3">
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                    Log in to Add to Wishlist
+                </a>
+            </div>
+        {% endif %}
+
         <div class="mt-3">
             <a href="{% url 'cards' %}" class="btn btn-outline-secondary">Back to Cards</a>
         </div>

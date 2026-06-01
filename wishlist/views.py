@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from cards.models import Card
 
 from .forms import WishlistItemForm
 from .models import WishlistItem
@@ -74,3 +75,25 @@ def delete_wishlist_item(request, item_id):
     return render(request, 'wishlist/wishlist_confirm_delete.html', {
         'wishlist_item': wishlist_item,
     })
+
+@login_required
+def add_existing_card_to_wishlist(request, card_id):
+    card = get_object_or_404(Card, id=card_id)
+
+    wishlist_item, created = WishlistItem.objects.get_or_create(
+        user=request.user,
+        card_name=card.name,
+        set_name=card.set_name,
+        defaults={
+            'desired_condition': 'any',
+            'max_price': card.price,
+            'notes': 'Added from ManaVault card listing.',
+        }
+    )
+
+    if created:
+        messages.success(request, f'{card.name} was added to your wishlist.')
+    else:
+        messages.info(request, f'{card.name} is already in your wishlist.')
+
+    return redirect('card_detail', card_id=card.id)
