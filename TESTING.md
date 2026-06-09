@@ -48,7 +48,7 @@ Testing included:
 I have used the recommended [HTML W3C Validator](https://validator.w3.org) to validate all of my HTML files.
 
 ### CSS
-CSS was checked using the W3C CSS Validator.
+CSS was checked using the [W3C CSS Validator](https://jigsaw.w3.org/css-validator/).
 
 ### Python
 Python files were reviewed for syntax, readability, and clean structure.
@@ -193,7 +193,7 @@ Testing was carried out to ensure users cannot access or modify records they do 
 
 ### Screenshot
 
-![Wishlist Protection](documentation/404-error.png)
+![Wishlist Protection](documentation/404-message.png)
 
 ### Evidence
 
