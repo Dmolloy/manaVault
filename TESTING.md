@@ -20,6 +20,9 @@ Testing covered:
 - Contact form
 - Deployment and media handling
 - Responsiveness and usability
+- Wishlist frontend CRUD
+- Defensive design and ownership protection
+- Admin model visibility
 
 ---
 
@@ -44,6 +47,12 @@ Testing included:
 
 I have used the recommended [HTML W3C Validator](https://validator.w3.org) to validate all of my HTML files.
 
+### CSS
+CSS was checked using the W3C CSS Validator.
+
+### Python
+Python files were reviewed for syntax, readability, and clean structure.
+
 ### Navigation and General Site Layout
 
 | Feature | Action | Expected Result | Actual Result | Pass/Fail |
@@ -67,6 +76,14 @@ I have used the recommended [HTML W3C Validator](https://validator.w3.org) to va
 | Logout | Click logout | User is logged out securely | Worked as expected | Pass |
 | Profile access | Visit profile while logged in | User sees profile page | Worked as expected | Pass |
 | Protected profile | Visit profile while logged out | User is redirected to login | Worked as expected | Pass |
+
+### Screenshots
+
+![Register](documentation/register.png)
+
+![Login](documentation/login.png)
+
+![Logout Message](documentation/logout-success.png)
 
 ---
 
@@ -110,6 +127,16 @@ I have used the recommended [HTML W3C Validator](https://validator.w3.org) to va
 | Cart clearing | Complete order | Cart is emptied | Worked as expected | Pass |
 | Success page | Complete payment | Success page shown | Worked as expected | Pass |
 
+### Screenshots
+
+![Cart](documentation/cart.png)
+
+![Checkout](documentation/checkout.png)
+
+![Stripe Checkout](documentation/stripe-pay.png)
+
+![Order Success](documentation/order-success.png)
+
 ### Stripe Test Card Used
 
 4242 4242 4242 4242
@@ -129,6 +156,53 @@ Any postcode
 
 ---
 
+## ⭐ Wishlist CRUD Testing
+
+The Wishlist feature was added to provide full frontend CRUD functionality.
+
+| CRUD Action | Action | Expected Result | Actual Result | Pass/Fail |
+|------------|--------|----------------|--------------|-----------|
+| Create | Submit wishlist form | Wishlist item created | Worked as expected | Pass |
+| Read | Visit wishlist page | User wishlist items displayed | Worked as expected | Pass |
+| Update | Edit existing wishlist item | Changes saved correctly | Worked as expected | Pass |
+| Delete | Delete wishlist item | Item removed from database | Worked as expected | Pass |
+| Add Existing Card | Add card to wishlist from card detail page | Wishlist item created automatically | Worked as expected | Pass |
+
+### Screenshots
+
+![Wishlist List](documentation/wishlist.png)
+
+![Add Wishlist Item](documentation/wishlist-form.png)
+
+![Edit Wishlist Item](documentation/wishlist-edit.png)
+
+![Delete Wishlist Item](documentation/wishlist_delete.png)
+
+---
+
+## 🛡 Defensive Design Testing
+
+Testing was carried out to ensure users cannot access or modify records they do not own.
+
+| Feature | Action | Expected Result | Actual Result | Pass/Fail |
+|----------|----------|----------|----------|----------|
+| Wishlist Protection | User B attempts to access User A wishlist edit URL | Access denied | 404 returned | Pass |
+| Wishlist Protection | User B attempts to access User A wishlist delete URL | Access denied | 404 returned | Pass |
+| Protected Wishlist | Logged-out user visits wishlist page | Redirected to login page | Worked as expected | Pass |
+| Protected Profile | Logged-out user visits profile page | Redirected to login page | Worked as expected | Pass |
+
+### Screenshot
+
+![Wishlist Protection](documentation/404-error.png)
+
+### Evidence
+
+User ownership checks are enforced using filtered queries that only return records belonging to the currently authenticated user.
+
+Attempting to access another user's wishlist record directly resulted in a 404 response.
+
+---
+
 ## 📩 Contact Form Testing
 
 | Feature | Action | Expected Result | Actual Result | Pass/Fail |
@@ -136,6 +210,38 @@ Any postcode
 | Contact page load | Visit contact page | Form displays correctly | Worked as expected | Pass |
 | Valid form submission | Submit valid form | Success message shown | Worked as expected | Pass |
 | Validation | Submit incomplete form | Validation errors shown | Worked as expected | Pass |
+| Contact message storage | Submit valid message | Message saved to database and visible in admin | Worked as expected | Pass |
+
+### Screenshots
+
+![Contact Form](documentation/contact.png)
+
+![Contact Message Admin](documentation/admin-contact-message.png)
+
+---
+
+## 🖥 Admin Panel Testing
+
+The assessor previously noted that some models were not visible within the Django admin panel.
+
+| Model | Expected Result | Actual Result | Pass/Fail |
+|--------|----------------|--------------|-----------|
+| Cards | Visible in admin | Worked as expected | Pass |
+| Orders | Visible in admin | Worked as expected | Pass |
+| Order Line Items | Visible in admin | Worked as expected | Pass |
+| User Profiles | Visible in admin | Worked as expected | Pass |
+| Wishlist Items | Visible in admin | Worked as expected | Pass |
+| Contact Messages | Visible in admin | Worked as expected | Pass |
+
+### Screenshots
+
+![Orders Admin](documentation/order-test.png)
+
+![Wishlist Admin](documentation/wishlist-admin.png)
+
+![Contact Messages Admin](documentation/admin-messages.png)
+
+![Order Line Items Admin](documentation/order-line.png)
 
 ---
 
@@ -157,7 +263,32 @@ Testing was carried out using browser developer tools and different viewport siz
 |--------|--------|
 | Google Chrome | Pass |
 | Microsoft Edge | Pass |
-| Safari | Pass
+| Safari | Pass |
+
+---
+
+## 🧪 Full User Flow Testing
+
+The following end-to-end flow was tested successfully:
+
+1. Register a new account
+2. Log in
+3. Browse cards
+4. View card detail page
+5. Add card to cart
+6. Add an existing card directly to wishlist from the card detail page
+7. Complete Stripe checkout
+8. Confirm order success
+9. Confirm order appears in profile
+10. Confirm order appears in admin
+11. Submit contact form
+12. Confirm contact message appears in admin
+13. Create wishlist item
+14. Edit wishlist item
+15. Delete wishlist item
+16. Log out
+
+Result: All steps completed successfully.
 
 ---
 
@@ -213,6 +344,26 @@ The project was deployed to Heroku with PostgreSQL and Cloudinary for media stor
 - **Issue:** Images were not persistent due to Heroku’s ephemeral file system.  
 - **Fix:** Integrated Cloudinary and re-uploaded media files.  
 
+### 10. Missing Frontend CRUD
+
+- Issue: Users could not create, edit, or delete database records from the frontend.
+- Fix: Implemented Wishlist CRUD functionality.
+
+### 11. Contact Form Not Storing Data
+
+- Issue: Contact form submissions were not saved.
+- Fix: Created ContactMessage model and database storage.
+
+### 12. Orders Not Visible in Admin
+
+- Issue: Orders could not be verified through Django admin.
+- Fix: Registered Order and OrderLineItem models in admin.
+
+### 13. Missing Custom Models
+
+- Issue: Project contained only one custom model.
+- Fix: Added WishlistItem and ContactMessage models.
+
 ---
 
 ## ⚠️ Validation and Edge Case Testing
@@ -233,6 +384,8 @@ The project was deployed to Heroku with PostgreSQL and Cloudinary for media stor
 - Submitted incomplete registration, contact, and checkout forms  
 - Validation errors displayed as expected  
 
+---
+
 ## 🔍 Lighthouse Testing
 
 Lighthouse testing was carried out on key pages to evaluate performance, accessibility, best practices, and SEO.
@@ -247,8 +400,8 @@ Lighthouse testing was carried out on key pages to evaluate performance, accessi
 
 ## 📊 Lighthouse Results Summary
 
-| Page | Performance | Accessibility | Best Practices | SEO |
-|------|------------|--------------|----------------|-----|
+| Page | Screenshot | Result | 
+|------|------------|--------------|
 | Homepage | ![lh-home](documentation/lh-home.png) | Pass/Minor warning |
 | Cards Page | ![lh-cards](documentation/lh-cards.png) | Pass/Minor warning |
 | Card Detail | ![lh-card-detail](documentation/lh-card-detail.png) | Pass/Minor warning |

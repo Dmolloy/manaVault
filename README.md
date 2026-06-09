@@ -1,11 +1,11 @@
 # manaVault
 
 ## Overview
-ManaVault is a Django-based e-commerce web application for browsing and purchasing Magic: The Gathering cards from a curated personal collection. Users can register for an account, browse available cards, manage a shopping cart, securely complete purchases using Stripe test payments, and view their order history through a personal profile page. The project was intentionally scoped as a single-seller storefront to deliver core e-commerce functionality to a high standard, while allowing for future expansion into a wider card trading marketplace.
+ManaVault is a Django-based e-commerce web application for browsing and purchasing Magic: The Gathering cards from a curated personal collection. Users can register for an account, browse available cards, manage a shopping cart, securely complete purchases using Stripe test payments, view their order history, and create wishlist requests for cards they would like ManaVault to stock in future. The project was intentionally scoped as a single-seller storefront to deliver core e-commerce functionality to a high standard, while allowing for future expansion into a wider card trading marketplace.
 
 ## 🚀 Live Project
 
-👉 https://the-polite-pup-ad72f09397c7.herokuapp.com/
+👉 https://manavault-03c0788c9056.herokuapp.com/
 
 ---
 
@@ -22,6 +22,8 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 - Add items to a cart  
 - Complete purchases securely  
 - View previous orders  
+- Create wishlist requests
+- Manage wishlist items
 
 ### Design Decisions
 - Clean Bootstrap layout for clarity and usability  
@@ -34,7 +36,22 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 
 ## ✨ Features
 
+### 🏠 Homepage
+
+- Hero section with featured imagery
+- Call-to-action buttons
+- Featured cards display
+- Responsive design
+
+![Homepage](documentation/hero-section.png)
+
 ### 🔐 Authentication
+Registered accounts allow users to:
+
+- View previous orders
+- Save delivery information
+- Create and manage wishlist requests
+- Access personalised profile features
 - User registration 
 ![Registration](documentation/register.png)
 - Login and logout (secure POST logout)
@@ -62,7 +79,7 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 
 ### 💳 Checkout (Stripe)
 - Stripe Checkout integration  
-[Stripe](documentation/stripe-pay.png)
+![Stripe](documentation/stripe-pay.png)
 - Secure payment handling  
 - Order creation after successful payment 
 ![Order-success](documentation/order-success.png) 
@@ -77,29 +94,27 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 ![Profile](documentation/profile.png)
 
 ### 📩 Contact
-- Contact form for user communication  
+- Contact form for user communication
+- Messages are stored in the database
+- Contact messages are visible through the Django admin panel
 ![Contact](documentation/contact.png)
 
----
-## 📖 User Stories
+### ⭐ Wishlist
+The Wishlist feature was introduced to provide full frontend CRUD functionality.
 
-### As a visitor:
-- I want to browse cards so I can see what is available  
-- I want to view card details so I can make informed decisions  
+Users can create, view, edit, and delete wishlist requests without requiring access to the admin panel.
+Users can also add existing cards directly to their wishlist from the card detail page with a single click.
 
-### As a shopper:
-- I want to add items to a cart so I can purchase multiple cards  
-- I want to update quantities so I can control my order  
-- I want to securely checkout so I can complete my purchase  
-
-### As a registered user:
-- I want to create an account so I can track my orders  
-- I want to log in and out securely  
-- I want to view my order history  
-
-### As a site owner:
-- I want to manage card stock via admin  
-- I want to track orders placed  
+- Create wishlist requests 
+![wishlist](documentation/wishlist-form.png)
+- View wishlist items
+![wishlist-items](documentation/my-wishlist.png)
+- Edit wishlist requests
+![wishlist-edit](documentation/wishlist-edit.png)
+- Delete wishlist requests
+![wishlist-delete](documentation/wishlist_delete.png)
+- Add existing cards directly to wishlist from card detail pages
+![wishlist-quick-add](documentation/wishlist-quick-add.png)
 
 ---
 ## 📖 User Stories
@@ -116,32 +131,15 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 ### As a registered user:
 - I want to create an account so I can track my orders  
 - I want to log in and out securely  
-- I want to view my order history  
+- I want to view my order history 
+- I want to create wishlist requests and save cards I am interested in
+- I want to see, edit, and delete items in my wishlist 
 
 ### As a site owner:
 - I want to manage card stock via admin  
 - I want to track orders placed  
-
----
-## 📖 User Stories
-
-### As a visitor:
-- I want to browse cards so I can see what is available  
-- I want to view card details so I can make informed decisions  
-
-### As a shopper:
-- I want to add items to a cart so I can purchase multiple cards  
-- I want to update quantities so I can control my order  
-- I want to securely checkout so I can complete my purchase  
-
-### As a registered user:
-- I want to create an account so I can track my orders  
-- I want to log in and out securely  
-- I want to view my order history  
-
-### As a site owner:
-- I want to manage card stock via admin  
-- I want to track orders placed  
+- I want to view contact messages
+- I want to view wishlist requests
 
 ---
 
@@ -189,27 +187,40 @@ ManaVault is a Django-based e-commerce web application for browsing and purchasi
 
 ---
 
+#### WishlistItem
+
+- user
+- card_name
+- set_name
+- desired_condition
+- max_price
+- notes
+- created_at
+
+#### ContactMessage
+
+- name
+- email
+- message
+- created_at
+- is_read
+
+---
+
 ## 🔗 Relationships
 
 - One User → One UserProfile  
 - One User → Many Orders  
 - One Order → Many OrderLineItems  
-- One Card → Many OrderLineItems  
+- One Card → Many OrderLineItems
+- One User → Many WishlistItems
+- ContactMessages are stored independently
 
 ---
 
 ## 📊 Entity Relationship Diagram
 
-USER ||--|| USERPROFILE : has  
-USER ||--o{ ORDER : places  
-ORDER ||--o{ ORDERLINEITEM : contains  
-CARD ||--o{ ORDERLINEITEM : appears_in  
-
-The database is structured to support an e-commerce workflow.
-
-Each user has a profile storing delivery information.  
-Users can place multiple orders, and each order contains multiple items.  
-Each order item links a card to an order, allowing multiple cards to be purchased in a single transaction.
+![ERD](documentation/erd.png)
 
 ---
 
@@ -219,13 +230,28 @@ Each order item links a card to an order, allowing multiple cards to be purchase
 - Quantity inputs are restricted by stock limits  
 - Checkout requires valid input fields  
 - Stripe handles secure payment validation  
-- Orders are only created after successful payment  
+- Orders are only created after successful payment 
+- Wishlist forms require valid input
+- Contact form validates required fields
+- Users can only edit or delete their own wishlist items 
 
 ---
 
 ## 🎨 Design Rationale
 
 ManaVault balances a trading card aesthetic with a clean e-commerce layout.
+
+### Homepage Improvements
+
+Following assessment feedback, the homepage was redesigned to improve visual appeal and user engagement.
+
+Enhancements include:
+
+- Hero image
+- Stronger call-to-action buttons
+- Featured cards section
+- Wishlist promotion
+- Improved spacing and typography
 
 ### UI Decisions
 - Grid layout improves browsing  
@@ -250,7 +276,11 @@ The project was developed iteratively:
 4. Checkout and Stripe integration  
 5. User authentication and profiles  
 6. Deployment to Heroku  
-7. UI improvements and debugging  
+7. UI improvements and debugging 
+8. Contact form database integration
+9. Wishlist CRUD implementation
+10. Defensive design improvements
+11. Homepage redesign and UX enhancements 
 
 
 ## Testing 
@@ -283,15 +313,29 @@ Images are stored using Cloudinary to ensure reliable media handling in producti
 
 ---
 
+## 🛡️ Defensive Design
+
+Defensive design has been implemented throughout the project.
+
+Examples include:
+
+- Login required for wishlist functionality
+- Ownership checks on wishlist edit and delete views
+- Users cannot access another user's wishlist items
+- 404 responses returned for unauthorized access attempts
+- Protected profile and order history pages
+- Secure POST logout implementation
+
+---
+
 ## 🎨 Future Improvements
 
-- Advanced filtering  
-- Search functionality  
-- Improved MTG styling  
-- Pagination  
-- Email confirmations  
-- Wishlist  
-- Marketplace functionality  
+- Advanced search and filtering
+- Wishlist email notifications
+- Card availability alerts
+- Order confirmation emails
+- Expanded inventory management
+- Community marketplace functionality
 
 ---
 
@@ -318,7 +362,7 @@ Images are stored using Cloudinary to ensure reliable media handling in producti
 - [Django](https://www.djangoproject.com/) - Framework that helped build the site. 
 - Django Admin enabled for secure backend management of users and bookings
 - [Gunicorn](https://gunicorn.org/) used for WSGI server
-- [Cloudinary] (https://cloudinary.com/) used for hosting images on the cloud server
+- [Cloudinary](https://cloudinary.com/) used for hosting images on the cloud server
 
 
 ---
@@ -330,7 +374,8 @@ manavault/
 ├── cards/  
 ├── cart/  
 ├── checkout/  
-├── profiles/  
+├── profiles/ 
+├── wishlist/ 
 ├── templates/  
 ├── static/  
 ├── media/  
@@ -338,6 +383,21 @@ manavault/
 ├── Procfile  
 ├── .python-version  
 └── manage.py  
+
+## 🖥️ Admin Functionality
+
+The Django admin panel allows site administrators to manage:
+
+- Cards
+- Orders
+- Order Line Items
+- User Profiles
+- Wishlist Items
+- Contact Messages
+
+The admin panel allows assessors and site administrators to verify orders, wishlist requests, contact messages, and customer activity.
+
+![Admin Panel](documentation/admin-panel.png)
 
 ## Deployment
 
@@ -394,7 +454,7 @@ The project should now be connected and deployed to Heroku!
 
 ### Cloning the Repository
 
-1. Go to the [GitHub repository.] (https://github.com/Dmolloy/manaVault.git).
+1. Go to the [GitHub repository.](https://github.com/Dmolloy/manaVault.git).
 2. Locate the Code button above the list of files and click it.
 3. Select if you prefer to clone using HTTPS, SSH, or GitHub CLI and click the copy button to copy the URL to your clipboard.
 4. Open Git Bash or Terminal.
@@ -415,7 +475,7 @@ By forking the GitHub Repository, we make a copy of the original repository on o
 - [Code Institute](https://codeinstitute.net/) - Tutorials and engaging course work.
 - [youtube](https://www.youtube.com/watch?v=PBcqGxrr9g8) - For helping with understanding live deployment using Heroku
 - [favicon.io](https://favicon.io/emoji-favicons/books/) - For providing the favicon
--[Cardmarket](https://www.cardmarket.com/) - Where I sourced all of my iamges for this project.
+-[Cardmarket](https://www.cardmarket.com/) - Where I sourced all of my images for this project.
 
-## Acknoledgements
+## Acknowledgements
 I would like to thank [Code Institute](https://codeinstitute.net/) for the lessons and guidance in working on this project. The [Discord Community](https://discord.com/) for the support to help continue moving with the project. 
